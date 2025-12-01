@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-dev
+  namespace: argocd
+spec:
+  # 指定ArgoCD项目，默认为default
+  project: default
+  
+  # 源代码配置
+  source:
+    # Git仓库URL
+    repoURL: https://github.com/boqier/KustomizeTest.git
+    # Git分支或标签
+    targetRevision: main
+    # kustomize目录路径
+    path: overlay/dev
+    # kustomize配置 
+  # 目标集群配置
+  destination:
+    # Kubernetes集群地址，使用集群内地址
+    server: https://kubernetes.default.svc
+    # 目标命名空间
+    namespace: default
+  
+  # 同步策略配置
+  syncPolicy:
+    # 自动同步配置
+    automated:
+      # 自动删除集群中存在但Git中不存在的资源
+      prune: true
+      # 自动修复集群状态与Git不一致的情况
+      selfHeal: true
+    # 同步选项
+    syncOptions:
+    # 自动创建目标命名空间
+    - CreateNamespace=true
+    # 允许符号链接
+    - RespectIgnoreDifferences=true
